@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if session %}
+<br>
+<br>
+<h1 id="main_title">Личный кабинет</h1>
+<table id="main_content_table">
+  <tr style="vertical-align:top">
+    <td style="width:300px">
+      <nav id="main_nav">
+        {% if session.acc_type != 3%}
+        <a href={{ url_for('index', act = 'my_schedule') }} style="text-decoration: none">
+          <div class="nav_item">Моё расписание</div>
+        </a>
+        {% endif %}
+        <a href={{ url_for('index', act = 'group_schedule') }} style="text-decoration: none">
+          <div class="nav_item">Расписание групп</div>
+        </a>
+        <a href={{ url_for('index', act = 'teacher_schedule') }} style="text-decoration: none">
+          <div class="nav_item">Расписание преподавателей</div>
+        </a>
+      </nav>
+    </td>
+    <td>
+      {% if request.args.get('act') == 'my_schedule' or not request.args.get('act')%}
+        <h2 style="margin-left: 20px; color: #5b9beb; font-size: 30px;">Моё расписание</h2>
+        <br>
+        {% for i in range(1,7) %}
+          <h2 style="margin-left: 20px; color: #5b9beb">День {{ i }}</h2>
+          <table>
+            {% for j in rec %}
+            <tr>
+              {% if (j[0]|int) == (i|int) %}
+              <td style="font-weight: bold; font-size: 20px; color: blue;">{{ j[1] }}</td>
+              <td style="font-weight: bold; font-size: 20px; color: red;">
+              {% if j[2] == 1%}
+              Л
+              {% elif j[2] == 2%}
+              П
+              {% endif %}
+              </td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: green;">{{ j[4] }}</td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: green;">()</td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: red;">ауд. {{ j[3] }}</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
+          <hr>
+        {% endfor %}
+      {% elif request.args.get('act') == 'group_schedule' %}
+        <p>Hey2</p>
+      {% elif request.args.get('act') == 'teacher_schedule' %}
+        <p>Hey3</p>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+{% endif %}
+{% endblock %}
