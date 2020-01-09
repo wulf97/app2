@@ -38,13 +38,16 @@ def index():
 			group_number  = cursor.fetchone()[0]
 			print(group_number)
 
-			sql = '''select tt1."day_of_the_week", tt1."serial_number", tt1."subject_type", tt1."audience_number", tt2."name" from'''
+			sql = '''select ttt1."day_of_the_week", ttt1."serial_number", ttt1."subject_type", ttt1."audience_number", ttt1."name" "sub_name", ttt2."name", ttt2."surname", ttt2."patronymic"  from'''
+			sql += '''(select * from'''
 			sql += '''(select * from'''
 			sql += '''"lesson" t1 inner join "group_lesson" t2 '''
 			sql += '''on t1."id" = t2."lesson_id"'''
 			sql += '''where "group_number" = '{}') '''.format(group_number)
 			sql += '''tt1 inner join "subject_in_the_curriculum" tt2 '''
-			sql += '''on tt1."subject_id" = tt2."id" '''
+			sql += '''on tt1."subject_id" = tt2."id") '''
+			sql += '''ttt1 inner join "user" ttt2 '''
+			sql += '''on ttt1."teacher_id" = ttt2."id" '''
 			sql += '''order by "day_of_the_week", "serial_number" asc'''
 			cursor.execute(sql)
 			rec = cursor.fetchall()
