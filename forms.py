@@ -103,3 +103,13 @@ class AddGroup(Form):
 class AddAudience(Form):
     audience_number = IntegerField('audience_number', validators = [NumberRange(0, 999)])
     submit = SubmitField('Добавить')
+
+# ********************************
+class GetGroupSchedule(Form):
+    group_number = SelectField('group_number', choices = [('0', 'None')])
+    submit = SubmitField('Показать')
+
+# ********************************
+class GetTeacherSchedule(Form):
+    teacher_id = SelectField('teacher_id', choices = [('0', 'None')])
+    submit = SubmitField('Показать')

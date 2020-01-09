@@ -50,9 +50,79 @@
           <hr>
         {% endfor %}
       {% elif request.args.get('act') == 'group_schedule' %}
-        <p>Hey2</p>
+        <h2 style="margin-left: 20px; color: #5b9beb; font-size: 30px;">Расписание по группам</h2>
+        <table style="width: 100%">
+          <tr>
+            <td>
+            {{ form.group_number.label('Номер группы', style = 'margin-left: 20px; color: red') }}
+            {{ form.group_number(class = 'input_form', selected = request.args.get('group', ''), value = request.args.get('group', ''), placeholder = 'Номер группы', style = 'margin-bottom: 10px; margin-left: 20px; max-width: 350px;') }}
+            </td>
+            <td>
+              <div style="margin-top: 28px; max-width: 350px; text-align: center; background-color: green;" class="submit_button" onclick="window.location.href='{{ url_for('''index''', act = '''group_schedule''', group_number = '''''') }}' + document.getElementById('group_number').value">Показать</div>
+            </td>
+          </tr>
+        </table>
+        <hr>
+        {% for i in range(1,7) %}
+          <h2 style="margin-left: 20px; color: #5b9beb">День {{ i }}</h2>
+          <table>
+            {% for j in rec %}
+            <tr>
+              {% if (j[0]|int) == (i|int) %}
+              <td style="font-weight: bold; font-size: 20px; color: blue;">{{ j[1] }}</td>
+              <td style="font-weight: bold; font-size: 20px; color: red;">
+              {% if j[2] == 1%}
+              Л
+              {% elif j[2] == 2%}
+              П
+              {% endif %}
+              </td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: green;">{{ j[4] }}</td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: green;">({{ j[6] }} {{ j[5] }} {{ j[7] }})</td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: red;">ауд. {{ j[3] }}</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
+          <hr>
+        {% endfor %}
       {% elif request.args.get('act') == 'teacher_schedule' %}
-        <p>Hey3</p>
+        <h2 style="margin-left: 20px; color: #5b9beb; font-size: 30px;">Расписание преподавателей</h2>
+        <table style="width: 100%">
+          <tr>
+            <td>
+            {{ form.teacher_id.label('Id преподавателя', style = 'margin-left: 20px; color: red') }}
+            {{ form.teacher_id(class = 'input_form', selected = request.args.get('group', ''), value = request.args.get('group', ''), placeholder = 'Id преподавателя', style = 'margin-bottom: 10px; margin-left: 20px; max-width: 350px;') }}
+            </td>
+            <td>
+              <div style="margin-top: 28px; max-width: 350px; text-align: center; background-color: green;" class="submit_button" onclick="window.location.href='{{ url_for('''index''', act = '''teacher_schedule''', teacher_id = '''''') }}' + document.getElementById('teacher_id').value">Показать</div>
+            </td>
+          </tr>
+        </table>
+        <hr>
+        {% for i in range(1,7) %}
+          <h2 style="margin-left: 20px; color: #5b9beb">День {{ i }}</h2>
+          <table>
+            {% for j in rec %}
+            <tr>
+              {% if (j[0]|int) == (i|int) %}
+              <td style="font-weight: bold; font-size: 20px; color: blue;">{{ j[1] }}</td>
+              <td style="font-weight: bold; font-size: 20px; color: red;">
+              {% if j[2] == 1%}
+              Л
+              {% elif j[2] == 2%}
+              П
+              {% endif %}
+              </td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: green;">{{ j[4] }}</td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: green;">({{ j[6] }} {{ j[5] }} {{ j[7] }})</td>
+              <td style="padding-left: 10px; font-weight: bold; font-size: 20px; color: red;">ауд. {{ j[3] }}</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
+          <hr>
+        {% endfor %}
       {% endif %}
     </td>
   </tr>

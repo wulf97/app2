@@ -17,10 +17,11 @@ app.secret_key = 'key'
 
 # **********************************************************
 # Главная страница
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 @app.route('/index')
 def index():
 	rec = []
+	form = []
 
 	if not session.get('acc_type'):
 		return redirect(url_for('login'))
@@ -52,8 +53,78 @@ def index():
 			cursor.execute(sql)
 			rec = cursor.fetchall()
 			print(rec)
+		elif session['acc_type'] == 2:
+			sql = '''select ttt1."day_of_the_week", ttt1."serial_number", ttt1."subject_type", ttt1."audience_number", ttt1."name" "sub_name", ttt2."name", ttt2."surname", ttt2."patronymic"  from'''
+			sql += '''(select * from'''
+			sql += '''(select * from'''
+			sql += '''"lesson" t1 inner join "group_lesson" t2 '''
+			sql += '''on t1."id" = t2."lesson_id")'''
+			sql += '''tt1 inner join "subject_in_the_curriculum" tt2 '''
+			sql += '''on tt1."subject_id" = tt2."id") '''
+			sql += '''ttt1 inner join "user" ttt2 '''
+			sql += '''on ttt1."teacher_id" = ttt2."id" '''
+			sql += '''where ttt1."teacher_id" = '{}' '''.format(session['id'])
+			sql += '''order by "day_of_the_week", "serial_number" asc'''
+			cursor.execute(sql)
+			rec = cursor.fetchall()
 
-	return render_template('index.html', rec = rec)
+	elif request.args.get('act', '') == 'group_schedule':
+		form = GetGroupSchedule(request.form)
+		sql = '''select "number" from "group"'''
+		cursor.execute(sql)
+		rec = cursor.fetchall()
+	elif request.args.get('act', '') == 'teacher_schedule':
+		form = GetTeacherSchedule(request.form)
+		sql = '''select "user_id" from "teacher"'''
+		cursor.execute(sql)
+		rec = cursor.fetchall()
+
+	if rec:
+		choices = []
+		if len(rec) > 0:
+			for i in rec:
+				choices += [(str(i[0]), str(i[0]))]
+		else:
+			choices = [(0, None)]
+
+		if hasattr(form, 'group_number'):
+			form.group_number.choices = choices;
+		if hasattr(form, 'teacher_id'):
+			form.teacher_id.choices = choices;
+
+	# rec = []
+	if request.args.get('group_number', '') != '':
+		sql = '''select ttt1."day_of_the_week", ttt1."serial_number", ttt1."subject_type", ttt1."audience_number", ttt1."name" "sub_name", ttt2."name", ttt2."surname", ttt2."patronymic"  from'''
+		sql += '''(select * from'''
+		sql += '''(select * from'''
+		sql += '''"lesson" t1 inner join "group_lesson" t2 '''
+		sql += '''on t1."id" = t2."lesson_id"'''
+		sql += '''where "group_number" = '{}') '''.format(request.args.get('group_number', ''))
+		sql += '''tt1 inner join "subject_in_the_curriculum" tt2 '''
+		sql += '''on tt1."subject_id" = tt2."id") '''
+		sql += '''ttt1 inner join "user" ttt2 '''
+		sql += '''on ttt1."teacher_id" = ttt2."id" '''
+		sql += '''order by "day_of_the_week", "serial_number" asc'''
+		cursor.execute(sql)
+		rec = cursor.fetchall()
+	elif request.args.get('teacher_id', '') != '':
+		sql = '''select ttt1."day_of_the_week", ttt1."serial_number", ttt1."subject_type", ttt1."audience_number", ttt1."name" "sub_name", ttt2."name", ttt2."surname", ttt2."patronymic"  from'''
+		sql += '''(select * from'''
+		sql += '''(select * from'''
+		sql += '''"lesson" t1 inner join "group_lesson" t2 '''
+		sql += '''on t1."id" = t2."lesson_id")'''
+		sql += '''tt1 inner join "subject_in_the_curriculum" tt2 '''
+		sql += '''on tt1."subject_id" = tt2."id") '''
+		sql += '''ttt1 inner join "user" ttt2 '''
+		sql += '''on ttt1."teacher_id" = ttt2."id" '''
+		sql += '''where ttt1."teacher_id" = '{}' '''.format(request.args.get('teacher_id', ''))
+		sql += '''order by "day_of_the_week", "serial_number" asc'''
+		cursor.execute(sql)
+		rec = cursor.fetchall()
+
+	cursor.close()
+	conn.close()
+	return render_template('index.html', rec = rec, form = form)
 
 # **********************************************************
 # Вход в систему
